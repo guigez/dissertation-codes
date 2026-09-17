@@ -11,7 +11,7 @@ Niterói–RJ, Brasil · 21 a 25 de setembro de 2026
 
 *(A Controlled NISQ Ablation of Hybrid Quantum–Classical CNNs for Biomedical Image Classification)*
 
-**Guilherme H. Rodrigues**¹ \*, **Ulisses M. Dias**¹
+**Guilherme H. Rodrigues**¹ \*, **Ulisses Dias**¹
 ¹ Faculdade de Tecnologia (FT), Universidade Estadual de Campinas (UNICAMP), Limeira–SP, Brasil
 \* Autor apresentador · g290200@dac.unicamp.br
 
@@ -21,7 +21,7 @@ Niterói–RJ, Brasil · 21 a 25 de setembro de 2026
 
 ## Resumo *(Abstract)*
 
-O módulo quântico de uma CNN híbrida quântico-clássica (H-QCNN) ajuda a classificar imagens biomédicas no regime NISQ? Trocando *apenas* esse módulo por um bloco clássico pareado (31.818 frames termográficos de 11 ratos), não encontramos **nenhuma vantagem agregada**. Além disso, o braço quântico tem **recall da classe minoritária significativamente menor** (0,518 vs 0,777; p = 0,008).
+O módulo quântico de uma CNN híbrida quântico-clássica (H-QCNN) ajuda a classificar imagens biomédicas no regime NISQ? Trocando *apenas* esse módulo por um bloco clássico pareado (31.818 frames termográficos de 11 ratos), não encontramos **nenhuma vantagem agregada**. Além disso, o módulo quântico tem **recall da classe minoritária significativamente menor** (0,518 vs 0,777; p = 0,008).
 
 **Palavras-chave *(Keywords)*:** aprendizado de máquina quântico; modelos híbridos quântico-clássicos; circuitos quânticos variacionais; NISQ; ablação controlada; classificação de imagens biomédicas; termografia infravermelha.
 
@@ -48,9 +48,9 @@ Modelos híbridos quântico-clássicos servem para investigar possíveis vantage
 | Heavy | Intenso | 21,5% |
 | Severe | Severo | 4,4% |
 
-**Arquitetura *(Architecture)*.** Os dois braços compartilham o mesmo pipeline com ResNet-50 [10] (Fig. 2). Um comparador não diferenciável (por exemplo, uma *random forest*) impediria o ajuste fino do backbone.
+**Arquitetura *(Architecture)*.** Os dois modelos compartilham o mesmo pipeline com ResNet-50 [10] (Fig. 2). Um comparador não diferenciável (por exemplo, uma *random forest*) impediria o ajuste fino do backbone.
 
-**Figura 2** — Ablação pareada: em cima, o pipeline compartilhado e as taxas de aprendizado (η) de cada parte do modelo; embaixo, o circuito quântico e o bloco clássico que o substitui.
+**Figura 2** — Ablação pareada: em cima, o pipeline compartilhado; embaixo, o circuito quântico e o bloco clássico que o substitui.
 
 *Conteúdo da figura:*
 
@@ -59,18 +59,18 @@ Modelos híbridos quântico-clássicos servem para investigar possíveis vantage
     - **quântico:** PQC de 8 qubits, 5 camadas, 40 parâmetros;
     - **clássico:** Linear + tanh, 8→8, 72 parâmetros.
 - **Circuito (embaixo, à esquerda):** 8 qubits em |0⟩ → codificação U_enc(z) → bloco R_X(θ_l) seguido de uma escada de CNOTs em anel, repetido N_l = 5 vezes → medição → ⟨Z_i⟩.
-- **Quadro azul, braço quântico *(Quantum arm)*:**
+- **Quadro azul, módulo quântico *(Quantum module)*:**
   - estado: |ψ(θ, z)⟩ = U_ent^(N_l)(θ) · U_enc(z) · |0⟩^(⊗N_q);
   - codificação R_X(π·σ(z_i));
   - N_l = 5 camadas de R_X(θ_{l,i}) + anel de CNOTs;
   - leitura: ⟨Z_i⟩;
   - **40 parâmetros**.
-- **Quadro laranja, braço clássico (controle) *(Classical arm, control)*:**
+- **Quadro laranja, módulo clássico (controle) *(Classical module, control)*:**
   - h = tanh(Wz + b), com W ∈ ℝ^(8×8) e b ∈ ℝ⁸;
   - **72 parâmetros**;
   - saída na mesma faixa (−1, 1) de ⟨Z_i⟩.
 
-**Protocolo pareado *(Paired protocol)*.** Tudo, exceto o módulo, é idêntico entre os braços:
+**Protocolo pareado *(Paired protocol)*.** Os dois modelos são idênticos, exceto pelo módulo:
 
 | No pôster | Tradução |
 |---|---|
@@ -94,15 +94,15 @@ Modelos híbridos quântico-clássicos servem para investigar possíveis vantage
 | Clássico (pareado, 72 parâmetros) | **0,532** | 0,411 | 0,492 | **0,532** | **0,777** |
 | p pareado (Wilcoxon) | 0,74 | 0,38 | — | 0,74 | **0,008** |
 
-**Paridade agregada *(Aggregate parity)*.** Os braços são indistinguíveis. O braço quântico tem acurácia balanceada maior em apenas 2 das 8 configurações, e sua vantagem em F1-macro não é significativa (p = 0,20 na comparação por *fold*). Os desvios-padrão altos refletem a heterogeneidade entre os ratos.
+**Métricas gerais *(Overall metrics)*.** Os dois módulos têm o mesmo desempenho. O módulo quântico tem acurácia balanceada maior em apenas 2 das 8 configurações, sua vantagem em F1-macro não é significativa (p = 0,20 na comparação por *fold*) e os desvios-padrão altos vêm das diferenças entre os ratos.
 
-**Classe minoritária *(Minority class)*.** A única diferença significativa **favorece o braço clássico**, que é melhor em **todas as oito** configurações (recall da classe severa: 0,777 vs 0,518; p = 0,008). O que muda é o ponto de operação, e não a separabilidade das classes (Fig. 3).
+**Classe minoritária *(Minority class)*.** A única diferença significativa **favorece o módulo clássico**, que é melhor em **todas as oito** configurações (recall da classe severa: 0,777 vs 0,518; p = 0,008). O que muda é o ponto de operação, e não a separabilidade das classes (Fig. 3).
 
-**Figura 3** — Matrizes de confusão somando todos os ratos de teste. As células mostram contagens; a cor mostra a proporção dentro de cada linha. Os dois braços quase não acertam a classe *intensa* (recall < 0,12). O braço clássico prevê a classe *severa* com mais frequência (coluna destacada). Por isso, a precisão da classe severa é 0,17 no braço clássico, contra 0,21 no quântico.
+**Figura 3** — Matrizes de confusão somando todos os ratos de teste. As células mostram contagens; a cor mostra a proporção dentro de cada linha. Os dois módulos quase não acertam a classe *intensa* (recall < 0,12). O módulo clássico prevê a classe *severa* com mais frequência (coluna destacada). Por isso, a precisão da classe severa é 0,17 no módulo clássico, contra 0,21 no quântico.
 
 *Conteúdo da figura: linhas = domínio verdadeiro; colunas = domínio previsto.*
 
-**Braço quântico** (PQC, 40 parâmetros)
+**Módulo quântico** (PQC, 40 parâmetros)
 
 | Verdadeiro \ Previsto | Baixo | Moderado | Intenso | Severo |
 |---|---|---|---|---|
@@ -111,7 +111,7 @@ Modelos híbridos quântico-clássicos servem para investigar possíveis vantage
 | Intenso | 165 | 3.742 | 1.017 | 3.892 |
 | Severo | 4 | 329 | 800 | 1.649 |
 
-**Braço clássico** (Linear(8→8) + tanh, 72 parâmetros)
+**Módulo clássico** (Linear(8→8) + tanh, 72 parâmetros)
 
 | Verdadeiro \ Previsto | Baixo | Moderado | Intenso | Severo |
 |---|---|---|---|---|
@@ -120,14 +120,14 @@ Modelos híbridos quântico-clássicos servem para investigar possíveis vantage
 | Intenso | 140 | 1.308 | 696 | 6.672 |
 | Severo | 5 | 116 | 245 | 2.416 |
 
-**Dependência do sujeito e atribuição *(Subject dependence and attribution)*.** A única vitória do braço quântico em acurácia balanceada acontece no rato 1 (o antigo sujeito de teste fixo). Nos outros três ratos o resultado se inverte, e em um deles o recall da classe severa é zero. Ou seja: o bloco clássico pareado reproduz, e até supera, a recuperação da classe minoritária que antes era atribuída ao pipeline híbrido. Mapas SHAP contrastivos [11] reforçam que o efeito vem do **backbone com ajuste fino**, e não do circuito quântico.
+**Dependência do sujeito e atribuição *(Subject dependence and attribution)*.** A única vitória do módulo quântico em acurácia balanceada acontece no rato 1 (o antigo sujeito de teste fixo). Nos outros três ratos o resultado se inverte, e em um deles o recall da classe severa é zero. O bloco clássico pareado reproduz, e até supera, a recuperação da classe minoritária que antes era atribuída ao pipeline híbrido. Mapas SHAP contrastivos [11] colocam o efeito no **backbone com ajuste fino**, e não no circuito quântico.
 
 ## Conclusões *(Conclusions)*
 
 > Neste regime NISQ, o PQC de 40 parâmetros **não traz vantagem mensurável** sobre um bloco clássico diferenciável pareado e é **significativamente pior na classe minoritária**.
 
 - Os ganhos aparentes vêm do ajuste fino do backbone clássico. Somado a [7], isso indica que as vantagens relatadas para H-QCNNs dependem do protocolo de validação.
-- Contribuição: isolar o módulo quântico já foi feito antes [4, 5]; o que este trabalho acrescenta é evidência independente do sujeito, que leva em conta o desbalanceamento das classes, e uma análise de atribuição que mostra que o efeito vem da parte clássica.
+- Contribuição: evidência independente do sujeito, que leva em conta o desbalanceamento das classes, e uma análise de atribuição que mostra que o efeito vem da parte clássica.
 - **Próximo passo *(Next)*:** rodar em hardware NISQ real via Amazon Braket (QPUs supercondutoras e de íons aprisionados), com extrapolação para ruído zero (ZNE).
 
 ## Referências *(References)*
@@ -152,7 +152,7 @@ Modelos híbridos quântico-clássicos servem para investigar possíveis vantage
 
 ## Agradecimentos *(Acknowledgements)*
 
-Os autores agradecem ao Programa de Pós-Graduação em Tecnologia (PPGT) da Faculdade de Tecnologia (FT) da UNICAMP. O presente trabalho foi realizado com apoio da Coordenação de Aperfeiçoamento de Pessoal de Nível Superior – Brasil (CAPES) – Código de Financiamento 001. Este trabalho também contou com apoio do FAEPEX/UNICAMP (Fundo de Apoio ao Ensino, Pesquisa e Extensão), processo 3207/26. U. M. Dias recebe Bolsa de Produtividade em Pesquisa do Conselho Nacional de Desenvolvimento Científico e Tecnológico (CNPq), processo 303911/2026-3.
+Os autores agradecem ao Programa de Pós-Graduação em Tecnologia (PPGT) da Faculdade de Tecnologia (FT) da UNICAMP. O presente trabalho foi realizado com apoio da Coordenação de Aperfeiçoamento de Pessoal de Nível Superior – Brasil (CAPES) – Código de Financiamento 001. Este trabalho também contou com apoio do FAEPEX/UNICAMP (Fundo de Apoio ao Ensino, Pesquisa e Extensão), processo 3207/26. U. Dias recebe Bolsa de Produtividade em Pesquisa do Conselho Nacional de Desenvolvimento Científico e Tecnológico (CNPq), processo 303911/2026-3.
 
 ---
 
@@ -161,7 +161,7 @@ Os autores agradecem ao Programa de Pós-Graduação em Tecnologia (PPGT) da Fac
 | Inglês | Português |
 |---|---|
 | matched classical block | bloco clássico pareado |
-| arm | braço (cada uma das duas versões comparadas) |
+| quantum / classical module | módulo quântico / clássico (as duas versões comparadas) |
 | balanced accuracy | acurácia balanceada |
 | recall | revocação (sensibilidade) |
 | operating point | ponto de operação |
